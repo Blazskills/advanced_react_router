@@ -1,5 +1,5 @@
 import "./App.css";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, RouterProvider, createBrowserRouter, createRoutesFromElements } from "react-router-dom";
 import { NotFound } from "./pages/errorpage/NotFound";
 import { Home } from "./pages/home/Home";
 import { Contact } from "./pages/contact/Contact";
@@ -15,7 +15,8 @@ function App() {
     <div className="App">
       <Router>
         <Routes>
-          <Route element={<Layout />}>
+          <Route path="/" element={<Layout />}>
+          {/* <Route element={<Layout />}> */}
             <Route index element={<Home />} />
             <Route path="contact" element={<Contact />} />
             <Route path="about" element={<About />} />

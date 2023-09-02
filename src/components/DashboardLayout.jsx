@@ -4,7 +4,7 @@ import { DashBoardNav } from "./DashBoardNav";
 export const DashBoardLayout = () => {
   return (
     <div className="flex">
-      <div className="bg-primary mr-[20px]">
+      <div className="bg-primary mr-[2px]">
         <DashBoardNav />
       </div>
       <div className="flex-1">
