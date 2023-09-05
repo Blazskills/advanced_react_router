@@ -1,60 +1,57 @@
 import { useState } from "react";
-import { useLoaderData, useNavigate } from "react-router-dom";
+import {
+  useLoaderData,
+  redirect,
+  Form,
+  useActionData,
+  useNavigation,
+} from "react-router-dom";
 import { loginUser } from "../../../api";
 
 export function loader({ request }) {
   return new URL(request.url).searchParams.get("message");
 }
 
+export async function action({ request }) {
+  try {
+    const formData = await request.formData();
+    const username = formData.get("username");
+    const password = formData.get("password");
+    // eslint-disable-next-line no-unused-vars
+    const data = await loginUser({ username, password });
+    localStorage.setItem("loggedin", true);
+    return redirect("/dashboard");
+  } catch (error) {
+    console.log("server error");
+    console.log(error);
+    return error.message;
+  }
+}
 export const Login = () => {
-  const [loginFormData, setLoginFormData] = useState({
-    username: "",
-    password: "",
-  });
-  const [status, setStatus] = useState("idle");
-  const [error, setError] = useState(null);
+  const errorMessage = useActionData();
+  const navigation = useNavigation();
 
   const message = useLoaderData();
 
-  const navigate = useNavigate()
-
-  function handleSubmit(e) {
-    e.preventDefault();
-    setStatus("submitting");
-    setError(null);
-    loginUser(loginFormData)
-      .then((data) =>{
-        console.log(data)
-        navigate("/")
-      })
-      .catch((err) => setError(err))
-      .finally(() => setStatus("idle"));
-  }
-  function handleChange(e) {
-    const { name, value } = e.target;
-    setLoginFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  }
   return (
     <section className="w-full h-[100vh] bg-[#c3c1abb4] flex flex-col justify-center items-center">
-      {message && error == null && (
-        <p className="text-red-500 font-thin font-serif text-[20px]">
-          {message}
-        </p>
-      )}
+      {(message && errorMessage == null) ||
+        (errorMessage == undefined && (
+          <p className="text-red-500 font-thin font-serif text-[20px]">
+            {message}
+          </p>
+        ))}
 
-      {error && (
+      {errorMessage && (
         <p className="text-red-700 font-thin font-serif text-[20px]">
-          {error.message}
+          {errorMessage}
         </p>
       )}
 
       <p className="font-bold font-serif text-[40px] mb-[20px]">
         Sign in to your account
       </p>
-      <form className="max-container w-full " onSubmit={handleSubmit}>
+      <Form method="post" className="max-container w-full" replace>
         <div className="mb-6 w-[50%] m-auto">
           <label
             htmlFor="username"
@@ -69,8 +66,6 @@ export const Login = () => {
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             placeholder="blazskills"
             required
-            onChange={handleChange}
-            value={loginFormData.username}
           />
         </div>
         <div className="mb-6 w-[50%] m-auto">
@@ -87,8 +82,6 @@ export const Login = () => {
             id="password"
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             required
-            onChange={handleChange}
-            value={loginFormData.password}
           />
         </div>
         <div className="flex items-start mb-6 w-[50%] m-auto">
@@ -109,13 +102,13 @@ export const Login = () => {
           </label>
         </div>
         <button
-          disabled={status === "submitting"}
+          disabled={navigation.state === "submitting"}
           type="submit"
           className=" bg-[#000000d1] w-[200px] h-[50px] mx-[50%] text-white-400 rounded-2xl"
         >
-          {status === "submitting" ? "Logging in..." : "Log in"}
+          {navigation.state === "submitting" ? "Logging in..." : "Log in"}
         </button>
-      </form>
+      </Form>
     </section>
   );
 };

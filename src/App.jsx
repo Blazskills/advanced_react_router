@@ -12,6 +12,7 @@ import { About } from "./pages/about/About";
 import { Product } from "./pages/dashboard/product/Product";
 import { loader as productsLoader } from "./pages/dashboard/product/Product";
 import { loader as productsLoaderDetails } from "./pages/dashboard/productDetails/ProductDetail";
+// import { loader as DashboardHomeLoader } from "./pages/dashboard/dashboardhome/DashboardHome";
 import { ProductDetail } from "./pages/dashboard/productDetails/ProductDetail";
 import { DashboardHome } from "./pages/dashboard/dashboardhome/DashboardHome";
 import { Login } from "./pages/auth/login/Login";
@@ -20,6 +21,7 @@ import { DashBoardLayout, Layout } from "./components";
 import { Error } from "./pages/errorthrown/Error";
 import { requiredAuth } from "./utils";
 import { loader as loginLoader } from "./pages/auth/login/Login";
+import { action as loginAction } from "./pages/auth/login/Login";
 const router = createBrowserRouter(
   createRoutesFromElements(
     <>
@@ -35,7 +37,11 @@ const router = createBrowserRouter(
             index
             errorElement={<Error />}
             element={<DashboardHome />}
-            loader={async () => await requiredAuth()}
+            loader = {async ()=> {
+              await requiredAuth();
+              return null
+            }}
+            // loader={DashboardHomeLoader}
           />
           <Route
             path="product"
@@ -55,6 +61,7 @@ const router = createBrowserRouter(
         path="/auth/login"
         element={<Login />}
         loader={loginLoader}
+        action={loginAction}
         errorElement={<Error />}
       />
       <Route path="/auth/register" element={<Register />} />
