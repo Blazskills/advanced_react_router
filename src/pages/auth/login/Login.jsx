@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   useLoaderData,
   redirect,
@@ -13,14 +12,16 @@ export function loader({ request }) {
 }
 
 export async function action({ request }) {
+  const formData = await request.formData();
+  const username = formData.get("username");
+  const password = formData.get("password");
   try {
-    const formData = await request.formData();
-    const username = formData.get("username");
-    const password = formData.get("password");
+    const pathName =
+      new URL(request.url).searchParams.get("redirectTo") || "/dashboard";
     // eslint-disable-next-line no-unused-vars
     const data = await loginUser({ username, password });
     localStorage.setItem("loggedin", true);
-    return redirect("/dashboard");
+    return redirect(pathName);
   } catch (error) {
     console.log("server error");
     console.log(error);

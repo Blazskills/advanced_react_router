@@ -32,26 +32,23 @@ const router = createBrowserRouter(
         <Route path="about" element={<About />} />
         <Route path="*" element={<NotFound />} />
 
-        <Route path="dashboard" element={<DashBoardLayout />}>
+        <Route
+          path="dashboard"
+          element={<DashBoardLayout />}
+          errorElement={<Error />}
+        >
           <Route
             index
-            errorElement={<Error />}
             element={<DashboardHome />}
-            loader = {async ()=> {
-              await requiredAuth();
-              return null
+            loader={async ({ request }) => {
+              await requiredAuth(request);
+              return null;
             }}
             // loader={DashboardHomeLoader}
           />
-          <Route
-            path="product"
-            errorElement={<Error />}
-            element={<Product />}
-            loader={productsLoader}
-          />
+          <Route path="product" element={<Product />} loader={productsLoader} />
           <Route
             path="product/:id"
-            errorElement={<Error />}
             element={<ProductDetail />}
             loader={productsLoaderDetails}
           />
