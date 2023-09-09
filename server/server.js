@@ -13,4 +13,12 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/v1/students", studentRoutes);
-app.listen(port, () => console.log(`app listening on ${port}`));
+const appStart = () => {
+  try {
+    app.listen(port, () => console.log(`app listening on ${port}`));
+  } catch (error) {
+    console.log(`Error : ${error.message}`);
+  }
+};
+
+appStart();

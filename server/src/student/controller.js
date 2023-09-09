@@ -8,11 +8,12 @@ import {
   updateStudentQuery,
 } from "./queries.js";
 
-const getStudents = (req, res) => {
+const getStudents = async (req, res) => {
   pool.query(getStudentsQuery, (error, result) => {
-    if (error) throw error;
-    res.status(200).json(result.rows);
-  });
+        if (error)
+            throw error;
+        res.status(200).json(result.rows);
+    });
 };
 
 const getStudentById = (req, res) => {
@@ -44,7 +45,10 @@ const addStudent = (req, res) => {
         res.status(500).send("Database error");
         return;
       }
-      res.status(201).send("Student Created successfully!");
+      res.status(201).send({
+        success: true,
+        message: "Student Created successfully!"
+      });
     });
   });
 };
